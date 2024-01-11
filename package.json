@@ -1,5 +1,7 @@
 {
 	"name": "@no-name-api/nna-sdk",
+	"version": "0.0.1",
+	"description": "SDK for No Name API",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/no-name-api/nna-sdk.git"
