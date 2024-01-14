@@ -1,3 +1,3 @@
 export default {
-	server_url: process.env.SERVER_URL,
+	server_url: "https://condor-logical-monthly.ngrok-free.app/api",
 };

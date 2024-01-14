@@ -1,31 +1,119 @@
-import Logger from "./services/Logger";
-import { ConnectResponse } from "./types/logger.types";
+import config from "./config";
+import { ConnectOptions, NewLogPayload } from "./types/main.types";
 /**
  * @class NNA
  * @description Main class for the NNA SDK. Spawns Logger instance.
  * @param {string} apiKey - user api key.
+ * @param {ConnectOptions} options - options for the SDK.
  */
-
 class NNA {
-	apiKey: string;
-	logger: InstanceType<typeof Logger>;
-	constructor(apiKey: string) {
+	private apiKey: string;
+	options = {
+		isDev: false,
+	};
+	constructor(apiKey: string, options?: ConnectOptions) {
 		this.apiKey = apiKey;
-		this.logger = new Logger();
+		if (options) {
+			this.options = options;
+		}
 	}
+
 	/**
-	 * @description connects to the server and validates the API key.
-	 * @returns error if not connected.
+	 * @name captureException
+	 * @param {Error} error - error Instance or unknown
+	 * @param {string} level - place of the error
+	 * @returns
 	 */
-	connect(): ConnectResponse {
-		return this.logger.connect(this.apiKey);
+	public async captureException(error: Error | unknown, level: string) {
+		let message = "";
+		if (error instanceof Error) {
+			message = "Error: " + error.message;
+		} else {
+			message = "An unknown error occurred while logging.";
+		}
+
+		try {
+			const response = await fetch(`${config.server_url}/exception`, {
+				method: "POST",
+				body: JSON.stringify({
+					apiKey: this.apiKey,
+					message,
+					level,
+				}),
+			});
+
+			if (response.ok) {
+				return response.json();
+			}
+			throw new Error(`Failed to log. Status: ${response.status}`);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				return error.message;
+			} else {
+				return "An unknown error occurred while catching exception.";
+			}
+		}
+	}
+
+	/**
+	 * @name send
+	 * @param {NewLogPayload} payload - payload object for the log consists of message and level
+	 * @param {string} payload.message - message to be logged
+	 * @param {string} payload.level - level of the log
+	 * @returns
+	 */
+	public async send({ message, level }: NewLogPayload) {
+		try {
+			const response = await fetch(`${config.server_url}/log`, {
+				method: "POST",
+				body: JSON.stringify({
+					apiKey: this.apiKey,
+					message,
+					level,
+				}),
+			});
+
+			if (response.ok) {
+				return response.json();
+			}
+			throw new Error(`Failed to log. Status: ${response.status}`);
+		} catch (error: unknown) {
+			if (error instanceof Error) {
+				return error.message;
+			} else {
+				return "An unknown error occurred while logging.";
+			}
+		}
+	}
+
+	public async getLogs() {
+		try {
+			const response = await fetch(
+				`${config.server_url}/logs/e1d923e2-a0b0-4cff-bd0c-c23227d5e9af`,
+				{
+					method: "GET",
+				}
+			);
+
+			if (response.ok) {
+				return response.json();
+			}
+
+			throw new Error(`Failed to get logs. Status: ${response.status}`);
+		} catch (error) {
+			if (error instanceof Error) {
+				return error.message;
+			} else {
+				return "An unknown error occurred while getting logs.";
+			}
+		}
 	}
 }
-
-export const NNApi = (apiKey: string) => new NNA(apiKey);
-
-const test = NNApi("c7dda661-4b7b-4137-9bd1-1ad1bfd7e639s");
-console.log(test);
-test.connect().then((res) => {
-	console.log(res);
-});
+/**
+ * @class NNA
+ * @description Main class for the NNA SDK. Spawns Logger instance.
+ * @param {string} apiKey - user api key.
+ * @param {ConnectOptions} options - options for the SDK.
+ */
+export const NNApi = (apiKey: string, options?: ConnectOptions) =>
+	new NNA(apiKey, options);
