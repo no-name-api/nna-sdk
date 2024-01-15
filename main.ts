@@ -4,15 +4,18 @@ import { ConnectOptions, NewLogPayload } from "./types/main.types";
  * @class NNA
  * @description Main class for the NNA SDK. Spawns Logger instance.
  * @param {string} apiKey - user api key.
+ * @param {string} logger_name - name of the logger.
  * @param {ConnectOptions} options - options for the SDK.
  */
 class NNA {
 	private apiKey: string;
+	public logger_name: string;
 	options = {
 		isDev: false,
 	};
-	constructor(apiKey: string, options?: ConnectOptions) {
+	constructor(apiKey: string, logger_name: string, options?: ConnectOptions) {
 		this.apiKey = apiKey;
+		this.logger_name = logger_name;
 		if (options) {
 			this.options = options;
 		}
@@ -37,6 +40,7 @@ class NNA {
 				method: "POST",
 				body: JSON.stringify({
 					apiKey: this.apiKey,
+					logger_name: this.logger_name,
 					message,
 					level,
 				}),
@@ -68,6 +72,7 @@ class NNA {
 				method: "POST",
 				body: JSON.stringify({
 					apiKey: this.apiKey,
+					logger_name: this.logger_name,
 					message,
 					level,
 				}),
@@ -113,7 +118,11 @@ class NNA {
  * @class NNA
  * @description Main class for the NNA SDK. Spawns Logger instance.
  * @param {string} apiKey - user api key.
+ * @param {string} logger_name - name of the logger.
  * @param {ConnectOptions} options - options for the SDK.
  */
-export const NNApi = (apiKey: string, options?: ConnectOptions) =>
-	new NNA(apiKey, options);
+export const NNApi = (
+	apiKey: string,
+	logger_name: string,
+	options?: ConnectOptions
+) => new NNA(apiKey, logger_name, options);
