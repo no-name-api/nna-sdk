@@ -1,20 +1,21 @@
+import axios from "axios";
 import config from "./config";
 import { ConnectOptions, NewLogPayload } from "./types/main.types";
 /**
  * @class NNA
  * @description Main class for the NNA SDK. Spawns Logger instance.
- * @param {string} apiKey - user api key.
+ * @param {string} api_key - user api key.
  * @param {string} logger_name - name of the logger.
  * @param {ConnectOptions} options - options for the SDK.
  */
 class NNA {
-	private apiKey: string;
+	private api_key: string;
 	public logger_name: string;
 	options = {
 		isDev: false,
 	};
-	constructor(apiKey: string, logger_name: string, options?: ConnectOptions) {
-		this.apiKey = apiKey;
+	constructor(api_key: string, logger_name: string, options?: ConnectOptions) {
+		this.api_key = api_key;
 		this.logger_name = logger_name;
 		if (options) {
 			this.options = options;
@@ -36,23 +37,25 @@ class NNA {
 		}
 
 		try {
-			const response = await fetch(`${config.server_url}/exception`, {
-				method: "POST",
-				body: JSON.stringify({
-					apiKey: this.apiKey,
-					logger_name: this.logger_name,
-					message,
-					level,
-				}),
-			});
+			const body = {
+				api_key: this.api_key,
+				logger_name: this.logger_name,
+				message,
+				level,
+			};
+			const { data, status } = await axios.post(
+				config.server_url + "/exception",
+				body
+			);
 
-			if (response.ok) {
-				return response.json();
+			if (data) {
+				return data;
 			}
-			throw new Error(`Failed to log. Status: ${response.status}`);
+
+			throw new Error(`Failed to log. Status: ${status}`);
 		} catch (error: unknown) {
 			if (error instanceof Error) {
-				return error.message;
+				return error?.message;
 			} else {
 				return "An unknown error occurred while catching exception.";
 			}
@@ -68,48 +71,26 @@ class NNA {
 	 */
 	public async send({ message, level }: NewLogPayload) {
 		try {
-			const response = await fetch(`${config.server_url}/log`, {
-				method: "POST",
-				body: JSON.stringify({
-					apiKey: this.apiKey,
-					logger_name: this.logger_name,
-					message,
-					level,
-				}),
-			});
-
-			if (response.ok) {
-				return response.json();
-			}
-			throw new Error(`Failed to log. Status: ${response.status}`);
-		} catch (error: unknown) {
-			if (error instanceof Error) {
-				return error.message;
-			} else {
-				return "An unknown error occurred while logging.";
-			}
-		}
-	}
-
-	public async getLogs() {
-		try {
-			const response = await fetch(
-				`${config.server_url}/logs/e1d923e2-a0b0-4cff-bd0c-c23227d5e9af`,
-				{
-					method: "GET",
-				}
+			const body = {
+				api_key: this.api_key,
+				logger_name: this.logger_name,
+				message,
+				level,
+			};
+			const { data, status } = await axios.post(
+				config.server_url + "/log",
+				body
 			);
 
-			if (response.ok) {
-				return response.json();
+			if (data) {
+				return data;
 			}
-
-			throw new Error(`Failed to get logs. Status: ${response.status}`);
-		} catch (error) {
+			throw new Error(`Failed to log. Status: ${status}`);
+		} catch (error: unknown) {
 			if (error instanceof Error) {
-				return error.message;
+				return error?.message;
 			} else {
-				return "An unknown error occurred while getting logs.";
+				return "An unknown error occurred while logging.";
 			}
 		}
 	}
@@ -117,11 +98,14 @@ class NNA {
 /**
  * @class NNA
  * @description Main class for the NNA SDK. Spawns Logger instance.
- * @param {string} apiKey - user api key.
+ * @param {string} api_key - user api key.
  * @param {string} logger_name - name of the logger.
  * @param {ConnectOptions} options - options for the SDK.
  */
-const NNApi = (apiKey: string, logger_name: string, options?: ConnectOptions) =>
-	new NNA(apiKey, logger_name, options);
+const NNApi = (
+	api_key: string,
+	logger_name: string,
+	options?: ConnectOptions
+) => new NNA(api_key, logger_name, options);
 
 export default NNApi;

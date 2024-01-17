@@ -1,3 +1,3 @@
 export default {
-	server_url: "https://nna-logger.fly.dev/api",
+	server_url: "https://api-nna-logger.onrender.com/api",
 };
