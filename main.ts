@@ -1,6 +1,12 @@
 import axios from "axios";
 import config from "./config";
 import { ConnectOptions, NewLogPayload } from "./types/main.types";
+
+const baseQuery = axios.create({
+	baseURL: config.server_url,
+	adapter: "http",
+});
+
 /**
  * @class NNA
  * @description Main class for the NNA SDK. Spawns Logger instance.
@@ -43,7 +49,7 @@ class NNA {
 				message,
 				level,
 			};
-			const { data, status } = await axios.post(
+			const { data, status } = await baseQuery.post(
 				config.server_url + "/exception",
 				body
 			);
@@ -77,7 +83,7 @@ class NNA {
 				message,
 				level,
 			};
-			const { data, status } = await axios.post(
+			const { data, status } = await baseQuery.post(
 				config.server_url + "/log",
 				body
 			);
@@ -109,3 +115,5 @@ const NNApi = (
 ) => new NNA(api_key, logger_name, options);
 
 export default NNApi;
+
+const nna = NNApi("725aa510-c8c6-4a50-9734-f602bc38c34e", "nna");
