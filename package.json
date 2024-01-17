@@ -1,11 +1,11 @@
 {
 	"name": "nna-sdk",
-	"version": "0.0.4",
+	"version": "0.0.9",
 	"description": "SDK for No Name API",
 	"main": "dist/index.js",
 	"types": "dist/index.d.ts",
 	"files": [
-		"dist/lib"
+		"core"
 	],
 	"author": {
 		"name": "Aleksandr Kononov",
@@ -18,7 +18,7 @@
 	"module": "main.ts",
 	"type": "module",
 	"scripts": {
-		"build": "sudo rm -rf ./dist &&  tsc -d --declarationDir dist/lib --declarationMap --emitDeclarationOnly && bun ./bun.build.ts"
+		"build": "sudo rm -rf ./core &&  tsc -d --declarationDir ./core --declarationMap --emitDeclarationOnly && bun ./bun.build.ts"
 	},
 	"devDependencies": {
 		"bun-types": "latest"

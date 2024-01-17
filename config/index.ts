@@ -1,3 +1,3 @@
 export default {
-	server_url: "https://condor-logical-monthly.ngrok-free.app/api",
+	server_url: "https://nna-logger.fly.dev/api",
 };

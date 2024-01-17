@@ -1,5 +1,5 @@
 await Bun.build({
 	entrypoints: ["./main.ts"],
-	outdir: "./dist/lib",
+	outdir: "./core",
 	target: "browser",
 });

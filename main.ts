@@ -121,8 +121,7 @@ class NNA {
  * @param {string} logger_name - name of the logger.
  * @param {ConnectOptions} options - options for the SDK.
  */
-export const NNApi = (
-	apiKey: string,
-	logger_name: string,
-	options?: ConnectOptions
-) => new NNA(apiKey, logger_name, options);
+const NNApi = (apiKey: string, logger_name: string, options?: ConnectOptions) =>
+	new NNA(apiKey, logger_name, options);
+
+export default NNApi;
